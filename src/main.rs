@@ -12,7 +12,7 @@ use amethyst::{
 };
 
 mod state;
-
+mod systems;
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
 
@@ -27,6 +27,7 @@ fn main() -> amethyst::Result<()> {
         .with_bundle(
             InputBundle::<StringBindings>::new().with_bindings_from_file(&key_bindings_path)?,
         )?
+        .with(systems::MovementSystem, "movement_system", &["input_system"])
         .with_bundle(UiBundle::<StringBindings>::new())?
         .with_bundle(
             RenderingBundle::<DefaultBackend>::new()
