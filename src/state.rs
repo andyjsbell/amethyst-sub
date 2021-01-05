@@ -102,7 +102,7 @@ fn load_sprites(world: &mut World) -> Vec<SpriteRender> {
         let loader = world.read_resource::<Loader>();
         let texture_storage = world.read_resource::<AssetStorage<Texture>>();
         loader.load(
-            "sprites/logo.png",
+            "sprites/sensei.png",
             ImageFormat::default(),
             (),
             &texture_storage,
@@ -115,7 +115,7 @@ fn load_sprites(world: &mut World) -> Vec<SpriteRender> {
         let loader = world.read_resource::<Loader>();
         let sheet_storage = world.read_resource::<AssetStorage<SpriteSheet>>();
         loader.load(
-            "sprites/logo.ron",
+            "sprites/sensei.ron",
             SpriteSheetFormat(texture_handle),
             (),
             &sheet_storage,
@@ -125,7 +125,7 @@ fn load_sprites(world: &mut World) -> Vec<SpriteRender> {
     // Create our sprite renders. Each will have a handle to the texture
     // that it renders from. The handle is safe to clone, since it just
     // references the asset.
-    (0..3)
+    (0..1)
         .map(|i| SpriteRender {
             sprite_sheet: sheet_handle.clone(),
             sprite_number: i,
