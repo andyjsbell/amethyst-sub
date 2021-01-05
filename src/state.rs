@@ -70,7 +70,7 @@ impl SimpleState for SubState {
 fn initialise_block(world: &mut World, sprite_sheet_handle: Handle<SpriteSheet>) {
     let mut transform = Transform::default();
     transform.set_translation_xyz(200.0, 200.0, 0.0);
-    let sprite_render = SpriteRender::new(sprite_sheet_handle, 1);
+    let sprite_render = SpriteRender::new(sprite_sheet_handle, 0);
 
     world
         .create_entity()
@@ -83,7 +83,7 @@ fn initialise_block(world: &mut World, sprite_sheet_handle: Handle<SpriteSheet>)
 fn initialise_sensei(world: &mut World, sprite_sheet_handle: Handle<SpriteSheet>) {
     let mut transform = Transform::default();
     transform.set_translation_xyz(100.0, 100.0, 0.0);
-    let sprite_render = SpriteRender::new(sprite_sheet_handle, 0);
+    let sprite_render = SpriteRender::new(sprite_sheet_handle, 1);
 
     world
         .create_entity()
