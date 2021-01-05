@@ -16,15 +16,15 @@ impl<'s> System<'s> for MovementSystem {
     );
 
     fn run(&mut self, (mut transforms, senseis, input): Self::SystemData) {
-        for (sensei, transform) in (&senseis, &mut transforms).join() {
-            let movement_x = input.axis_value("");
-            let movement_y = input.axis_value("");
+        for (_, transform) in (&senseis, &mut transforms).join() {
+            let movement_x = input.axis_value("move_x");
+            let movement_y = input.axis_value("move_y");
             if let Some(x) = movement_x {
-                println!("Movement x: {}", x);
+                transform.set_translation_x(transform.translation().x + (x * 1.2));    
             }
 
             if let Some(y) = movement_y {
-                println!("Movement y: {}", y);
+                transform.set_translation_y(transform.translation().y + (y * 1.2));
             }
         }
     }

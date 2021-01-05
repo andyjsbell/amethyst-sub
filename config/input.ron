@@ -5,8 +5,8 @@
             neg: Key(Left),
         ),
         "move_y": Emulated(
-            pos: Key(Down),
-            neg: Key(Up),
+            pos: Key(Up),
+            neg: Key(Down),
         ),
     },
     actions: {

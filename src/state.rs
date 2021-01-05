@@ -55,9 +55,9 @@ impl SimpleState for SubState {
             }
 
             // Listen to any key events
-            if let Some(event) = get_key(&event) {
-                info!("handling key event: {:?}", event);
-            }
+            // if let Some(event) = get_key(&event) {
+            //     info!("handling key event: {:?}", event);
+            // }
 
             // If you're looking for a more sophisticated event handling solution,
             // including key bindings and gamepad support, please have a look at
