@@ -1,7 +1,7 @@
 [package]
-name = "amethyst-starter-2d"
+name = "amethyst-miner"
 version = "0.2.0"
-authors = ["Hilmar Wiegand <me@hwgnd.de>", "Amethyst Foundation <contact@amethyst.rs>"]
+authors = ["Andy Bell <andy.bell@barkingmad.io>"]
 edition = "2018"
 
 [dependencies]

@@ -102,7 +102,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "amethyst-starter-2d"
+name = "amethyst-miner"
 version = "0.2.0"
 dependencies = [
  "amethyst",

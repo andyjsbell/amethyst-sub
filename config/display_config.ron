@@ -1,4 +1,4 @@
 (
-  title: "Amethyst Substrate POC",
+  title: "Amethyst Miner",
   dimensions: Some((800, 600)),
 )

@@ -13,27 +13,12 @@ use amethyst::{
 
 use log::info;
 
-/// A dummy game state that shows 3 sprites.
-pub struct MyState;
+/// Our substrate mining game state
+pub struct SubState;
 
-impl SimpleState for MyState {
-    // Here, we define hooks that will be called throughout the lifecycle of our game state.
-    //
-    // In this example, `on_start` is used for initializing entities
-    // and `handle_state` for managing the state transitions.
-    //
-    // For more state lifecycle hooks, see:
-    // https://book.amethyst.rs/stable/concepts/state.html#life-cycle
-
-    /// The state is initialized with:
-    /// - a camera centered in the middle of the screen.
-    /// - 3 sprites places around the center.
+impl SimpleState for SubState {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
-
-        // Get the screen dimensions so we can initialize the camera and
-        // place our sprites correctly later. We'll clone this since we'll
-        // pass the world mutably to the following functions.
         let dimensions = (*world.read_resource::<ScreenDimensions>()).clone();
 
         // Place the camera
@@ -90,7 +75,7 @@ fn init_camera(world: &mut World, dimensions: &ScreenDimensions) {
         .build();
 }
 
-/// Loads and splits the `logo.png` image asset into 3 sprites,
+/// Loads and splits the `sensei.png` image asset into 1 sprite,
 /// which will then be assigned to entities for rendering them.
 ///
 /// The provided `world` is used to retrieve the resource loader.
@@ -199,7 +184,7 @@ pub fn create_ui_example(world: &mut World) {
         ))
         .with(UiText::new(
             font,
-            "Hello, Amethyst UI!".to_string(),
+            "Substrate mining for Amethyst".to_string(),
             [1., 1., 1., 1.],
             30.,
             LineMode::Single,
