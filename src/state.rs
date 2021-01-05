@@ -1,22 +1,18 @@
-use amethyst::{
-    assets::{AssetStorage, Loader, Handle},
-    core::transform::Transform,
-    input::{get_key, is_close_requested, is_key_down, VirtualKeyCode},
-    prelude::*,
-    ecs::{Component, DenseVecStorage},
-    renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
-    ui::{
+use amethyst::{assets::{AssetStorage, Loader, Handle}, core::transform::Transform, ecs::{Component, DenseVecStorage}, input::{get_key, is_close_requested, is_key_down, VirtualKeyCode}, prelude::*, renderer::{Camera, ImageFormat, Sprite, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture}, ui::{
         Anchor, FontHandle, LineMode, Stretch, TtfFormat, UiButtonBuilder, UiImage, UiText,
         UiTransform,
-    },
-    window::ScreenDimensions,
-};
+    }, window::ScreenDimensions};
 
-use log::info;
+// use log::info;
 
 pub struct Sensei;
+pub struct Block;
 
 impl Component for Sensei {
+    type Storage = DenseVecStorage<Self>;
+}
+
+impl Component for Block {
     type Storage = DenseVecStorage<Self>;
 }
 
@@ -28,12 +24,14 @@ impl SimpleState for SubState {
         let world = data.world;
         let dimensions = (*world.read_resource::<ScreenDimensions>()).clone();
         world.register::<Sensei>();
+        world.register::<Block>();
         // Place the camera
         init_camera(world, &dimensions);
 
         // Load our sprites and display them
         let sprites = load_sprites(world);
-        initialise_sensei(world, sprites);
+        initialise_sensei(world, sprites.clone());
+        initialise_block(world, sprites);
 
         // init_sprites(world, &sprites, &dimensions);
 
@@ -67,6 +65,19 @@ impl SimpleState for SubState {
         // Keep going
         Trans::None
     }
+}
+
+fn initialise_block(world: &mut World, sprite_sheet_handle: Handle<SpriteSheet>) {
+    let mut transform = Transform::default();
+    transform.set_translation_xyz(200.0, 200.0, 0.0);
+    let sprite_render = SpriteRender::new(sprite_sheet_handle, 1);
+
+    world
+        .create_entity()
+        .with(sprite_render)
+        .with(Block {})
+        .with(transform)
+        .build();
 }
 
 fn initialise_sensei(world: &mut World, sprite_sheet_handle: Handle<SpriteSheet>) {
@@ -108,7 +119,7 @@ fn load_sprites(world: &mut World) -> Handle<SpriteSheet> {
         let loader = world.read_resource::<Loader>();
         let texture_storage = world.read_resource::<AssetStorage<Texture>>();
         loader.load(
-            "sprites/sensei.png",
+            "sprites/tilesheet.png",
             ImageFormat::default(),
             (),
             &texture_storage,
@@ -121,7 +132,7 @@ fn load_sprites(world: &mut World) -> Handle<SpriteSheet> {
         let loader = world.read_resource::<Loader>();
         let sheet_storage = world.read_resource::<AssetStorage<SpriteSheet>>();
         loader.load(
-            "sprites/sensei.ron",
+            "sprites/tilesheet.ron",
             SpriteSheetFormat(texture_handle),
             (),
             &sheet_storage,
