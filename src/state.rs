@@ -1,8 +1,9 @@
 use amethyst::{
-    assets::{AssetStorage, Loader},
+    assets::{AssetStorage, Loader, Handle},
     core::transform::Transform,
     input::{get_key, is_close_requested, is_key_down, VirtualKeyCode},
     prelude::*,
+    ecs::{Component, DenseVecStorage},
     renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
     ui::{
         Anchor, FontHandle, LineMode, Stretch, TtfFormat, UiButtonBuilder, UiImage, UiText,
@@ -13,6 +14,12 @@ use amethyst::{
 
 use log::info;
 
+pub struct Sensei;
+
+impl Component for Sensei {
+    type Storage = DenseVecStorage<Self>;
+}
+
 /// Our substrate mining game state
 pub struct SubState;
 
@@ -20,15 +27,17 @@ impl SimpleState for SubState {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
         let dimensions = (*world.read_resource::<ScreenDimensions>()).clone();
-
+        world.register::<Sensei>();
         // Place the camera
         init_camera(world, &dimensions);
 
         // Load our sprites and display them
         let sprites = load_sprites(world);
-        init_sprites(world, &sprites, &dimensions);
+        initialise_sensei(world, sprites);
 
-        create_ui_example(world);
+        // init_sprites(world, &sprites, &dimensions);
+
+        // create_ui_example(world);
     }
 
     /// The following events are handled:
@@ -60,6 +69,18 @@ impl SimpleState for SubState {
     }
 }
 
+fn initialise_sensei(world: &mut World, sprite_sheet_handle: Handle<SpriteSheet>) {
+    let mut transform = Transform::default();
+    transform.set_translation_xyz(100.0, 100.0, 0.0);
+    let sprite_render = SpriteRender::new(sprite_sheet_handle, 0);
+
+    world
+        .create_entity()
+        .with(sprite_render)
+        .with(Sensei {})
+        .with(transform)
+        .build();
+}
 /// Creates a camera entity in the `world`.
 ///
 /// The `dimensions` are used to center the camera in the middle
@@ -79,7 +100,7 @@ fn init_camera(world: &mut World, dimensions: &ScreenDimensions) {
 /// which will then be assigned to entities for rendering them.
 ///
 /// The provided `world` is used to retrieve the resource loader.
-fn load_sprites(world: &mut World) -> Vec<SpriteRender> {
+fn load_sprites(world: &mut World) -> Handle<SpriteSheet> {
     // Load the texture for our sprites. We'll later need to
     // add a handle to this texture to our `SpriteRender`s, so
     // we need to keep a reference to it.
@@ -107,38 +128,39 @@ fn load_sprites(world: &mut World) -> Vec<SpriteRender> {
         )
     };
 
+    sheet_handle
     // Create our sprite renders. Each will have a handle to the texture
     // that it renders from. The handle is safe to clone, since it just
     // references the asset.
-    (0..1)
-        .map(|i| SpriteRender {
-            sprite_sheet: sheet_handle.clone(),
-            sprite_number: i,
-        })
-        .collect()
+    // (0..1)
+    //     .map(|i| SpriteRender {
+    //         sprite_sheet: sheet_handle.clone(),
+    //         sprite_number: i,
+    //     })
+    //     .collect()
 }
 
 /// Creates an entity in the `world` for each of the provided `sprites`.
 /// They are individually placed around the center of the screen.
-fn init_sprites(world: &mut World, sprites: &[SpriteRender], dimensions: &ScreenDimensions) {
-    for (i, sprite) in sprites.iter().enumerate() {
-        // Center our sprites around the center of the window
-        let x = (i as f32 - 1.) * 100. + dimensions.width() * 0.5;
-        let y = (i as f32 - 1.) * 100. + dimensions.height() * 0.5;
-        let mut transform = Transform::default();
-        transform.set_translation_xyz(x, y, 0.);
+// fn init_sprites(world: &mut World, sprites: &[SpriteRender], dimensions: &ScreenDimensions) {
+//     for (i, sprite) in sprites.iter().enumerate() {
+//         // Center our sprites around the center of the window
+//         let x = (i as f32 - 1.) * 100. + dimensions.width() * 0.5;
+//         let y = (i as f32 - 1.) * 100. + dimensions.height() * 0.5;
+//         let mut transform = Transform::default();
+//         transform.set_translation_xyz(x, y, 0.);
 
-        // Create an entity for each sprite and attach the `SpriteRender` as
-        // well as the transform. If you want to add behaviour to your sprites,
-        // you'll want to add a custom `Component` that will identify them, and a
-        // `System` that will iterate over them. See https://book.amethyst.rs/stable/concepts/system.html
-        world
-            .create_entity()
-            .with(sprite.clone())
-            .with(transform)
-            .build();
-    }
-}
+//         // Create an entity for each sprite and attach the `SpriteRender` as
+//         // well as the transform. If you want to add behaviour to your sprites,
+//         // you'll want to add a custom `Component` that will identify them, and a
+//         // `System` that will iterate over them. See https://book.amethyst.rs/stable/concepts/system.html
+//         world
+//             .create_entity()
+//             .with(sprite.clone())
+//             .with(transform)
+//             .build();
+//     }
+// }
 
 /// Creates a simple UI background and a UI text label
 /// This is the pure code only way to create UI with amethyst.
