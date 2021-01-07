@@ -13,6 +13,8 @@ use amethyst::{
 
 mod state;
 mod systems;
+mod map;
+
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
 

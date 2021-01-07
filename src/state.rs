@@ -2,9 +2,11 @@ use amethyst::{assets::{AssetStorage, Loader, Handle}, core::transform::Transfor
         Anchor, FontHandle, LineMode, Stretch, TtfFormat, UiButtonBuilder, UiImage, UiText,
         UiTransform,
     }, window::ScreenDimensions};
+use map::{TileType, create_simple_map};
+
+use crate::map;
 
 // use log::info;
-
 pub struct Sensei;
 pub struct Block;
 
@@ -23,6 +25,7 @@ impl SimpleState for SubState {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
         let dimensions = (*world.read_resource::<ScreenDimensions>()).clone();
+        
         world.register::<Sensei>();
         world.register::<Block>();
         // Place the camera
@@ -31,8 +34,7 @@ impl SimpleState for SubState {
         // Load our sprites and display them
         let sprites = load_sprites(world);
         initialise_sensei(world, sprites.clone());
-        initialise_block(world, sprites);
-
+        initialise_map(world, &dimensions, sprites);
         // init_sprites(world, &sprites, &dimensions);
 
         // create_ui_example(world);
@@ -67,9 +69,34 @@ impl SimpleState for SubState {
     }
 }
 
-fn initialise_block(world: &mut World, sprite_sheet_handle: Handle<SpriteSheet>) {
-    let mut transform = Transform::default();
-    transform.set_translation_xyz(200.0, 200.0, 0.0);
+fn initialise_map(world: &mut World, dimensions: &ScreenDimensions, sprite_sheet_handle: Handle<SpriteSheet>) {
+    let simple_map = create_simple_map(
+        dimensions.width() as usize, 
+        dimensions.height() as usize, 
+        80, (10, 8))
+        .unwrap();
+
+    let mut row = 0;
+    let mut column = 0;
+    
+    for tile in simple_map.tiles {
+        if tile == TileType::Wall {
+            let mut transform = Transform::default();
+            transform.set_translation_xyz(
+                ((column * map::GRID_SIZE) + (map::GRID_SIZE / 2)) as f32, 
+                ((row * map::GRID_SIZE) + (map::GRID_SIZE / 2)) as f32,
+                0.0);
+            initialise_block(world, transform, sprite_sheet_handle.clone());
+        }
+
+        column += 1;
+        if column == simple_map.columns {
+            column = 0;
+            row += 1;
+        }
+    }
+}
+fn initialise_block(world: &mut World, transform: Transform, sprite_sheet_handle: Handle<SpriteSheet>) {
     let sprite_render = SpriteRender::new(sprite_sheet_handle, 0);
 
     world
@@ -82,7 +109,7 @@ fn initialise_block(world: &mut World, sprite_sheet_handle: Handle<SpriteSheet>)
 
 fn initialise_sensei(world: &mut World, sprite_sheet_handle: Handle<SpriteSheet>) {
     let mut transform = Transform::default();
-    transform.set_translation_xyz(100.0, 100.0, 0.0);
+    transform.set_translation_xyz(336.0, 272.0, 0.0);
     let sprite_render = SpriteRender::new(sprite_sheet_handle, 1);
 
     world
