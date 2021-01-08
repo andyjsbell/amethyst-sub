@@ -1,4 +1,4 @@
-mod sensei;
+mod player;
 
-pub use self::sensei::MovementSystem;
+pub use self::player::MovementSystem;
 

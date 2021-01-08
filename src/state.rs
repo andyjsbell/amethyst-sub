@@ -1,21 +1,20 @@
 use std::fmt::Debug;
 
-use amethyst::{assets::{AssetStorage, Loader, Handle}, core::transform::Transform, ecs::{Component, DenseVecStorage}, input::{get_key, is_close_requested, is_key_down, VirtualKeyCode}, prelude::*, renderer::{Camera, ImageFormat, Sprite, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture}, ui::{
-        Anchor, FontHandle, LineMode, Stretch, TtfFormat, UiButtonBuilder, UiImage, UiText,
-        UiTransform,
-    }, window::ScreenDimensions};
+use amethyst::{assets::{AssetStorage, Loader, Handle}, core::transform::Transform, ecs::{Component, DenseVecStorage}, input::{get_key, is_close_requested, is_key_down, VirtualKeyCode}, prelude::*, renderer::{Camera, ImageFormat, Sprite, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture}, window::ScreenDimensions};
 use map::{TileType, create_simple_map};
 
 use crate::map;
 // use log::info;
-pub struct Sensei;
+pub struct Player {
+    pub speed: f32,
+}
 
 #[derive(Debug)]
 pub struct Block;
 
 const START_POS: (usize, usize) = (10, 8);
 
-impl Component for Sensei {
+impl Component for Player {
     type Storage = DenseVecStorage<Self>;
 }
 
@@ -31,14 +30,14 @@ impl SimpleState for SubState {
         let world = data.world;
         let dimensions = (*world.read_resource::<ScreenDimensions>()).clone();
         
-        world.register::<Sensei>();
+        world.register::<Player>();
         world.register::<Block>();
         // Place the camera
         init_camera(world, &dimensions);
 
         // Load our sprites and display them
         let sprites = load_sprites(world);
-        initialise_sensei(world, sprites.clone());
+        initialise_player(world, sprites.clone());
         initialise_map(world, &dimensions, sprites);
     }
 
@@ -101,7 +100,7 @@ fn initialise_block(world: &mut World, transform: Transform, sprite_sheet_handle
         .build();
 }
 
-fn initialise_sensei(world: &mut World, sprite_sheet_handle: Handle<SpriteSheet>) {
+fn initialise_player(world: &mut World, sprite_sheet_handle: Handle<SpriteSheet>) {
     let mut transform = Transform::default();
     transform.set_translation_xyz(
         (START_POS.0 * map::GRID_SIZE + map::GRID_SIZE / 2) as f32, 
@@ -113,7 +112,9 @@ fn initialise_sensei(world: &mut World, sprite_sheet_handle: Handle<SpriteSheet>
     world
         .create_entity()
         .with(sprite_render)
-        .with(Sensei {})
+        .with(Player {
+            speed: 1.2
+        })
         .with(transform)
         .build();
 }

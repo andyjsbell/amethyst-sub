@@ -3,7 +3,7 @@ use amethyst::derive::SystemDesc;
 use amethyst::ecs::{Join, Read, ReadStorage, System, SystemData, World, WriteStorage};
 use amethyst::input::{InputHandler, StringBindings, VirtualKeyCode};
 
-use crate::{map::{Coordinate, Map, TileType, coordinate_to_grid}, state::Sensei};
+use crate::{map::{Coordinate, Map, TileType, coordinate_to_grid}, state::Player};
 
 #[derive(SystemDesc)]
 pub struct MovementSystem;
@@ -20,13 +20,13 @@ enum Direction {
 impl<'s> System<'s> for MovementSystem {
     type SystemData = (
         WriteStorage<'s, Transform>,
-        ReadStorage<'s, Sensei>,
+        ReadStorage<'s, Player>,
         Read<'s, InputHandler<StringBindings>>,
         Read<'s, Map>,
     );
 
-    fn run(&mut self, (mut transforms, senseis, input, map): Self::SystemData) {
-        for (_, transform) in (&senseis, &mut transforms).join() {
+    fn run(&mut self, (mut transforms, players, input, map): Self::SystemData) {
+        for (player, transform) in (&players, &mut transforms).join() {
             let mut dir = Direction::None;
             
             if input.key_is_down(VirtualKeyCode::Left) {
@@ -47,19 +47,19 @@ impl<'s> System<'s> for MovementSystem {
             match dir {
                 Direction::None => {}
                 Direction::Left => { 
-                    next_x -= 1.0;
+                    next_x -= 1.0 * player.speed;
                     offset_x = -8.0;
                 }
                 Direction::Right => {
-                    next_x += 1.0;
+                    next_x += 1.0 * player.speed;
                     offset_x = 8.0;
                 }
                 Direction::Up => {
-                    next_y += 1.0;
+                    next_y += 1.0 * player.speed;
                     offset_y = 12.0;
                 }
                 Direction::Down => {
-                    next_y -= 1.0;
+                    next_y -= 1.0 * player.speed;
                     offset_y = -12.0;
                 }
             }

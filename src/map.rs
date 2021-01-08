@@ -81,8 +81,6 @@ pub fn create_simple_map(width: usize, height: usize, blocks: usize, player: (us
 
 #[cfg(test)]
 mod tests {
-    use amethyst::core::math::coordinates;
-
     use super::*;
 
     #[test]
