@@ -7,10 +7,36 @@ pub enum TileType {
     Floor,
 }
 
+#[derive(Clone, Default)]
 pub struct Map {
     pub rows: usize,
     pub columns: usize,
     pub tiles: Vec<TileType>,
+}
+
+/// Grid position, column by row
+pub struct GridPosition(pub usize, pub usize);
+/// Coordinate x, y
+pub struct Coordinate(pub f32, pub f32);
+
+impl Map { 
+    pub fn grid_to_index(&self, position: GridPosition) -> usize {
+        (position.1 * self.columns) + position.0
+    }
+}
+
+pub fn grid_to_coordinates(position: GridPosition) -> Coordinate {
+    Coordinate(
+        (position.0 * GRID_SIZE) as f32,
+        (position.1 * GRID_SIZE) as f32
+    ) 
+}
+
+pub fn coordinate_to_grid(coordinate: Coordinate) -> GridPosition {
+    GridPosition(
+        coordinate.0 as usize / GRID_SIZE,
+        coordinate.1 as usize / GRID_SIZE
+    )
 }
 
 /// Create a simple map width, height and number of random blocks
@@ -41,8 +67,6 @@ pub fn create_simple_map(width: usize, height: usize, blocks: usize, player: (us
         let row = rng.gen_range(1..rows - 1);
         if column != player.0 || row != player.1 {
             tiles[(columns * row) + column] = TileType::Wall;
-        } else {
-            println!("match on {} {}", column, 8);
         }
     }
     
@@ -53,4 +77,25 @@ pub fn create_simple_map(width: usize, height: usize, blocks: usize, player: (us
     };
 
     Ok(map)
+}
+
+#[cfg(test)]
+mod tests {
+    use amethyst::core::math::coordinates;
+
+    use super::*;
+
+    #[test]
+    fn test_coordinate_to_grid() {
+        let coord = Coordinate(100.0, 100.0);
+        let grid = coordinate_to_grid(coord);
+        assert!(grid.0 == 3 && grid.1 == 3);
+    }
+
+    #[test]
+    fn test_grid_to_coordinate() {
+        let grid = GridPosition(7, 7);
+        let coord = grid_to_coordinates(grid);
+        assert!(coord.0 == 224.0 && coord.1 == 224.0);
+    }
 }
