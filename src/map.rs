@@ -16,6 +16,17 @@ pub struct Map {
 
 /// Grid position, column by row
 pub struct GridPosition(pub usize, pub usize);
+pub struct GridDimension(pub usize);
+pub struct GridRectangle(pub GridPosition, pub GridDimension, pub GridDimension);
+
+impl std::ops::Mul for GridDimension {
+    type Output = Self;
+    
+    fn mul(self, rhs: Self) -> Self::Output {
+        GridDimension(self.0 * rhs.0)
+    }
+}
+
 /// Coordinate x, y
 pub struct Coordinate(pub f32, pub f32);
 
@@ -76,6 +87,42 @@ pub fn create_simple_map(width: usize, height: usize, blocks: usize, player: (us
         tiles
     };
 
+    Ok(map)
+}
+
+pub fn add_room_to_map(room: GridRectangle, map: &mut Map) {
+    let rows = room.2.0;
+    let cols = room.1.0;
+    let pos = room.0;
+    for row in 0..rows {
+        let start_idx = map.grid_to_index(GridPosition(pos.0, pos.1 + row));
+        for idx in start_idx..(start_idx + cols) {
+            map.tiles[idx] = TileType::Floor;
+        }
+    }
+}
+
+pub fn create_map(width: usize, height: usize, player: (usize, usize)) -> Result<Map, String> {
+    if width % GRID_SIZE != 0 || height % GRID_SIZE != 0 {
+        return Err("Invalid dimensions, we need to be divisable by 32".to_string());
+    }
+
+    let columns  = width / GRID_SIZE;
+    let rows = height / GRID_SIZE;
+    let tiles = vec![TileType::Wall; columns * rows];
+    let mut map = Map {
+        rows,
+        columns,
+        tiles
+    };
+
+    add_room_to_map(
+        GridRectangle(
+                GridPosition(3,3), 
+                GridDimension(5), 
+                GridDimension(5)
+            ), &mut map);
+    
     Ok(map)
 }
 

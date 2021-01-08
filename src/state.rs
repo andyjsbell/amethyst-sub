@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 
 use amethyst::{assets::{AssetStorage, Loader, Handle}, core::transform::Transform, ecs::{Component, DenseVecStorage}, input::{get_key, is_close_requested, is_key_down, VirtualKeyCode}, prelude::*, renderer::{Camera, ImageFormat, Sprite, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture}, window::ScreenDimensions};
-use map::{TileType, create_simple_map};
+use map::{TileType, create_map, create_simple_map};
 
 use crate::map;
 // use log::info;
@@ -59,19 +59,19 @@ impl SimpleState for SubState {
 }
 
 fn initialise_map(world: &mut World, dimensions: &ScreenDimensions, sprite_sheet_handle: Handle<SpriteSheet>) {
-    let simple_map = create_simple_map(
+    let map = create_map(
         dimensions.width() as usize, 
         dimensions.height() as usize, 
-        80, START_POS)
+        START_POS)
         .unwrap();
 
             
-    world.insert(simple_map.clone());
+    world.insert(map.clone());
 
     let mut row = 0;
     let mut column = 0;
     
-    for tile in simple_map.tiles {
+    for tile in map.tiles {
         if tile == TileType::Wall {
             let mut transform = Transform::default();
             transform.set_translation_xyz(
@@ -82,7 +82,7 @@ fn initialise_map(world: &mut World, dimensions: &ScreenDimensions, sprite_sheet
         }
 
         column += 1;
-        if column == simple_map.columns {
+        if column == map.columns {
             column = 0;
             row += 1;
         }
