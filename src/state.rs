@@ -5,10 +5,11 @@ use amethyst::{assets::{AssetStorage, Loader, Handle}, core::transform::Transfor
 use map::{TileType, create_simple_map};
 
 use crate::map;
-
 // use log::info;
 pub struct Sensei;
 pub struct Block;
+
+const START_POS: (usize, usize) = (10, 8);
 
 impl Component for Sensei {
     type Storage = DenseVecStorage<Self>;
@@ -53,15 +54,6 @@ impl SimpleState for SubState {
             if is_close_requested(&event) || is_key_down(&event, VirtualKeyCode::Escape) {
                 return Trans::Quit;
             }
-
-            // Listen to any key events
-            // if let Some(event) = get_key(&event) {
-            //     info!("handling key event: {:?}", event);
-            // }
-
-            // If you're looking for a more sophisticated event handling solution,
-            // including key bindings and gamepad support, please have a look at
-            // https://book.amethyst.rs/stable/pong-tutorial/pong-tutorial-03.html#capturing-user-input
         }
 
         // Keep going
@@ -73,7 +65,7 @@ fn initialise_map(world: &mut World, dimensions: &ScreenDimensions, sprite_sheet
     let simple_map = create_simple_map(
         dimensions.width() as usize, 
         dimensions.height() as usize, 
-        80, (10, 8))
+        80, START_POS)
         .unwrap();
 
     let mut row = 0;
@@ -109,7 +101,11 @@ fn initialise_block(world: &mut World, transform: Transform, sprite_sheet_handle
 
 fn initialise_sensei(world: &mut World, sprite_sheet_handle: Handle<SpriteSheet>) {
     let mut transform = Transform::default();
-    transform.set_translation_xyz(336.0, 272.0, 0.0);
+    transform.set_translation_xyz(
+        (START_POS.0 * map::GRID_SIZE + map::GRID_SIZE / 2) as f32, 
+        (START_POS.1 * map::GRID_SIZE + map::GRID_SIZE / 2) as f32,
+        0.0);
+
     let sprite_render = SpriteRender::new(sprite_sheet_handle, 1);
 
     world
