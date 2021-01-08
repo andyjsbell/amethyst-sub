@@ -40,14 +40,8 @@ impl SimpleState for SubState {
         let sprites = load_sprites(world);
         initialise_sensei(world, sprites.clone());
         initialise_map(world, &dimensions, sprites);
-        // init_sprites(world, &sprites, &dimensions);
-
-        // create_ui_example(world);
     }
 
-    /// The following events are handled:
-    /// - The game state is quit when either the close button is clicked or when the escape key is pressed.
-    /// - Any other keypress is simply logged to the console.
     fn handle_event(
         &mut self,
         mut _data: StateData<'_, GameData<'_, '_>>,
@@ -165,55 +159,4 @@ fn load_sprites(world: &mut World) -> Handle<SpriteSheet> {
     };
 
     sheet_handle
-}
-
-pub fn create_ui_example(world: &mut World) {
-    // this creates the simple gray background UI element.
-    let ui_background = world
-        .create_entity()
-        .with(UiImage::SolidColor([0.6, 0.1, 0.2, 1.0]))
-        .with(UiTransform::new(
-            "".to_string(),
-            Anchor::TopLeft,
-            Anchor::TopLeft,
-            30.0,
-            -30.,
-            0.,
-            250.,
-            50.,
-        ))
-        .build();
-
-    // This simply loads a font from the asset folder and puts it in the world as a resource,
-    // we also get a ref to the font that we then can pass to the text label we crate later.
-    let font: FontHandle = world.read_resource::<Loader>().load(
-        "fonts/Bangers-Regular.ttf",
-        TtfFormat,
-        (),
-        &world.read_resource(),
-    );
-
-    // This creates the actual label and places it on the screen.
-    // Take note of the z position given, this ensures the label gets rendered above the background UI element.
-    world
-        .create_entity()
-        .with(UiTransform::new(
-            "".to_string(),
-            Anchor::TopLeft,
-            Anchor::TopLeft,
-            40.0,
-            -40.,
-            1.,
-            200.,
-            50.,
-        ))
-        .with(UiText::new(
-            font,
-            "Substrate mining for Amethyst".to_string(),
-            [1., 1., 1., 1.],
-            30.,
-            LineMode::Single,
-            Anchor::TopLeft,
-        ))
-        .build();
 }
