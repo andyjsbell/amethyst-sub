@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 use amethyst::{assets::{AssetStorage, Loader, Handle}, core::transform::Transform, ecs::{Component, DenseVecStorage}, input::{get_key, is_close_requested, is_key_down, VirtualKeyCode}, prelude::*, renderer::{Camera, ImageFormat, Sprite, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture}, ui::{
         Anchor, FontHandle, LineMode, Stretch, TtfFormat, UiButtonBuilder, UiImage, UiText,
         UiTransform,
@@ -7,6 +9,8 @@ use map::{TileType, create_simple_map};
 use crate::map;
 // use log::info;
 pub struct Sensei;
+
+#[derive(Debug)]
 pub struct Block;
 
 const START_POS: (usize, usize) = (10, 8);
@@ -68,6 +72,9 @@ fn initialise_map(world: &mut World, dimensions: &ScreenDimensions, sprite_sheet
         80, START_POS)
         .unwrap();
 
+            
+    world.insert(simple_map.clone());
+
     let mut row = 0;
     let mut column = 0;
     
@@ -88,6 +95,7 @@ fn initialise_map(world: &mut World, dimensions: &ScreenDimensions, sprite_sheet
         }
     }
 }
+
 fn initialise_block(world: &mut World, transform: Transform, sprite_sheet_handle: Handle<SpriteSheet>) {
     let sprite_render = SpriteRender::new(sprite_sheet_handle, 0);
 
@@ -130,14 +138,8 @@ fn init_camera(world: &mut World, dimensions: &ScreenDimensions) {
         .build();
 }
 
-/// Loads and splits the `sensei.png` image asset into 1 sprite,
-/// which will then be assigned to entities for rendering them.
-///
-/// The provided `world` is used to retrieve the resource loader.
 fn load_sprites(world: &mut World) -> Handle<SpriteSheet> {
-    // Load the texture for our sprites. We'll later need to
-    // add a handle to this texture to our `SpriteRender`s, so
-    // we need to keep a reference to it.
+
     let texture_handle = {
         let loader = world.read_resource::<Loader>();
         let texture_storage = world.read_resource::<AssetStorage<Texture>>();
@@ -163,41 +165,8 @@ fn load_sprites(world: &mut World) -> Handle<SpriteSheet> {
     };
 
     sheet_handle
-    // Create our sprite renders. Each will have a handle to the texture
-    // that it renders from. The handle is safe to clone, since it just
-    // references the asset.
-    // (0..1)
-    //     .map(|i| SpriteRender {
-    //         sprite_sheet: sheet_handle.clone(),
-    //         sprite_number: i,
-    //     })
-    //     .collect()
 }
 
-/// Creates an entity in the `world` for each of the provided `sprites`.
-/// They are individually placed around the center of the screen.
-// fn init_sprites(world: &mut World, sprites: &[SpriteRender], dimensions: &ScreenDimensions) {
-//     for (i, sprite) in sprites.iter().enumerate() {
-//         // Center our sprites around the center of the window
-//         let x = (i as f32 - 1.) * 100. + dimensions.width() * 0.5;
-//         let y = (i as f32 - 1.) * 100. + dimensions.height() * 0.5;
-//         let mut transform = Transform::default();
-//         transform.set_translation_xyz(x, y, 0.);
-
-//         // Create an entity for each sprite and attach the `SpriteRender` as
-//         // well as the transform. If you want to add behaviour to your sprites,
-//         // you'll want to add a custom `Component` that will identify them, and a
-//         // `System` that will iterate over them. See https://book.amethyst.rs/stable/concepts/system.html
-//         world
-//             .create_entity()
-//             .with(sprite.clone())
-//             .with(transform)
-//             .build();
-//     }
-// }
-
-/// Creates a simple UI background and a UI text label
-/// This is the pure code only way to create UI with amethyst.
 pub fn create_ui_example(world: &mut World) {
     // this creates the simple gray background UI element.
     let ui_background = world
