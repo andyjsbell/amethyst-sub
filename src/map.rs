@@ -29,12 +29,13 @@ pub struct Size(pub Dimension, pub Dimension);
 pub struct Rectangle(pub Position, pub Size);
 
 impl Rectangle {
+    // Rect{x1:x, y1:y, x2:x+w, y2:y+h}
+    // self.x1 <= other.x2 && self.x2 >= other.x1 && self.y1 <= other.y2 && self.y2 >= other.y1
     pub fn intersect(&self, other:&Rectangle) -> bool {
-        let col = other.0.0;
-        let row = other.0.1;
-
-        (col.0 >= self.0.0.0 && col.0 <= self.0.0.0 + self.1.0.0) &&
-        (row.0 >= self.0.1.0 && row.0 <= self.0.1.0 + self.1.1.0)
+        self.0.0 <= other.0.0 + other.1.0 &&
+        self.0.0 + self.1.0 >= other.0.0 &&
+        self.0.1 <= other.0.1 + other.1.1 &&
+        self.0.1 + self.1.1 >= other.0.1
     }
 
     pub fn center(&self) -> Position {
@@ -253,5 +254,15 @@ mod tests {
         assert!(room.0.1 < 10.into());
         assert!(room.1.0 <= 4.into());
         assert!(room.1.1 <= 4.into());
+    }
+
+    #[test]
+    fn test_intersect() {
+        let r1 = Rectangle(Position(0.into(), 0.into()), Size(2.into(), 2.into()));
+        let r2 = Rectangle(Position(1.into(), 1.into()), Size(2.into(), 2.into()));
+        let r3 = Rectangle(Position(3.into(), 3.into()), Size(4.into(), 4.into()));
+        
+        assert!(r1.intersect(&r2));
+        assert!(!r1.intersect(&r3));
     }
 }
