@@ -1,17 +1,18 @@
-<img src="repo/splash.png" alt="Amethyst 2D starter template" />
+## Introduction
 
-This project template will get you from 0 to drawing something on the screen in no time. If you're looking for a more in-depth introduction to the engine, please have a look at [our book](https://book.amethyst.rs/stable/)!
+A simple roguelike game built with Amethyst and following the online book https://bfnightly.bracketproductions.com/
 
-This project template also includes a small example of how to draw UI, see in state.rs for create_ui_example().
-<img src="repo/screenshot.png" alt="Amethyst 2D starter template" height="300px" />
+The idea is to create a simple Rogue game using the engine Amethyst (https://amethyst.rs/) and then to connect this up to a Substrate (https://www.substrate.io/) based chain to store items, score and other game like thingies...
+
+The first thing to do is to build a game which will offer us a reasonable amount of game play from which we can then have a look at adding items to the Substrate based chain.
 
 ## Quickstart
 
 - Clone the repository
 
 ```bash
-git clone https://github.com/amethyst/amethyst-starter-2d.git
-cd amethyst-starter-2d
+git clone https://github.com/andyjsbell/amethyst-sub.git
+cd amethyst-sub
 ```
 
 - Build and run the project
@@ -45,14 +46,4 @@ You might need to install some dependencies. Please refer to [this section](http
 
 ## Features
 
-This project contains the minimum amount of code needed to draw sprites to the screen. Here's a small summary of what you'll find in the source files:
-
-- `resources/display_config.ron`  
-  Contains the window configuration (size, title).
-
-- `src/main.rs`  
-  Creates the render graph, adds the required bundles, builds the game data with our own state and finally, starts the game's main event loop.
-
-- `src/state.rs`  
-  Implements the main game state. In the `on_start` hook, the camera is initialized, and the sprites that will be drawn are loaded and their entities created.  
-   In the `handle_event` hook, we print any keys that were pressed and close the window if the user presses escape or the OS requests that we quit.
+Things to come...
