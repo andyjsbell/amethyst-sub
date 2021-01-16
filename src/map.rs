@@ -207,15 +207,14 @@ pub fn create_map(width: usize, height: usize, player: (usize, usize)) -> Result
         tiles
     };
 
-    let max_rooms = 10;
+    let max_rooms = 100;
     let mut current_rooms: Vec<Rectangle> = Vec::new();
 
     for _ in 0..max_rooms {
-        let room = create_room(4.into(), 10.into(), Size(columns.into(), rows.into()));
+        let room = create_room(3.into(), 6.into(), Size(columns.into(), rows.into()));
         let mut ok = true;
         for existing in current_rooms.iter() {
             if room.intersect(&existing) {
-                println!("intersected");
                 ok = false;
             }
         }
