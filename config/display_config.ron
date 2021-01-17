@@ -1,4 +1,4 @@
 (
   title: "Amethyst Miner",
-  dimensions: Some((1028, 768)),
+  dimensions: Some((1280, 960)),
 )
