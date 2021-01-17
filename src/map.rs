@@ -181,8 +181,8 @@ pub fn create_room(min: Dimension, max: Dimension, size: Size) -> Rectangle {
     let height = rng.gen_range(min.0..max.0);
     let columns : usize = size.0.into();
     let rows : usize = size.1.into();
-    let x = rng.gen_range(1..(columns - width - 1));
-    let y = rng.gen_range(1..(rows - height - 1));
+    let x = rng.gen_range(0..(columns - width - 1));
+    let y = rng.gen_range(0..(rows - height - 1));
     
     Rectangle(
         Position(
