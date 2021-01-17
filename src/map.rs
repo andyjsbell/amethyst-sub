@@ -1,3 +1,5 @@
+use std::char::MAX;
+
 use rand::Rng;
 pub const GRID_SIZE: usize = 32;
 
@@ -59,6 +61,18 @@ impl std::ops::Add for Dimension {
 
     fn add(self, rhs: Self) -> Self::Output {
         Dimension(self.0 + rhs.0)
+    }
+}
+
+impl std::ops::Sub for Dimension {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        if rhs.0 > self.0 {
+            Dimension(rhs.0 - self.0)
+        } else {
+            Dimension(self.0 - rhs.0)
+        }
     }
 }
 
@@ -207,21 +221,35 @@ pub fn create_map(width: usize, height: usize, player: (usize, usize)) -> Result
         tiles
     };
 
-    let max_rooms = 100;
-    let mut current_rooms: Vec<Rectangle> = Vec::new();
+    const MAX_ROOMS : i32 = 100;
+    let mut rooms: Vec<Rectangle> = Vec::new();
+    let mut rng = rand::thread_rng();
 
-    for _ in 0..max_rooms {
-        let room = create_room(3.into(), 6.into(), Size(columns.into(), rows.into()));
+    for _ in 0..MAX_ROOMS {
+        let new_room = create_room(3.into(), 6.into(), Size(columns.into(), rows.into()));
         let mut ok = true;
-        for existing in current_rooms.iter() {
-            if room.intersect(&existing) {
+        for existing in rooms.iter() {
+            if new_room.intersect(&existing) {
                 ok = false;
             }
         }
         if ok {
-            println!("adding room {:?}", room);
-            add_room_to_map(room, &mut map);
-            current_rooms.push(room);
+            println!("adding room {:?}", new_room);
+            add_room_to_map(new_room, &mut map);
+            
+            if !rooms.is_empty() {
+                let new_position = new_room.center();
+                let prev_position = rooms[rooms.len()-1].center();
+                if rng.gen_range(0..2) == 1 {
+                    add_tunnel(Orientation::Horizontal, &new_position, new_position.0 - prev_position.0, &mut map);
+                    add_tunnel(Orientation::Vertical, &new_position, new_position.1 - prev_position.1, &mut map);
+                } else {
+                    add_tunnel(Orientation::Vertical, &new_position, new_position.1 - prev_position.1, &mut map);
+                    add_tunnel(Orientation::Horizontal, &new_position, new_position.0 - prev_position.0, &mut map);
+                }
+            }
+
+            rooms.push(new_room);
         }
     }
     
